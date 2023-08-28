@@ -9,6 +9,7 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -118,6 +119,13 @@ public class MainActivity extends AppCompatActivity {
             mediaRecorder.prepare();
 
             // Request permission to capture the screen
+            // Inside MainActivity's startRecording method
+            Intent serviceIntent = new Intent(this, MediaProjectionService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
             startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
         } catch (IOException e) {
             e.printStackTrace();
